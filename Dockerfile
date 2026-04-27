@@ -1,30 +1,27 @@
 FROM python:3.11-slim
 
 RUN apt update && apt install -y \
-wget \
-curl \
 ffmpeg \
+curl \
+wget \
 libstdc++6 \
-ca-certificates \
-unzip
+espeak-ng \
+build-essential \
+&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 COPY requirements.txt .
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Instala Piper correto
-RUN wget https://github.com/rhasspy/piper/releases/download/v1.2.0/piper_linux_x86_64.tar.gz && \
-tar -xzf piper_linux_x86_64.tar.gz && \
-mv piper/piper /usr/local/bin/piper && \
-chmod +x /usr/local/bin/piper && \
-rm -rf piper*
+# instala piper tts
+RUN pip install --no-cache-dir piper-tts
 
 COPY . .
 
 RUN chmod +x start.sh
-RUN mkdir -p /app/output
-RUN mkdir -p /app/voices
+RUN mkdir -p /app/output /app/voices
 
 EXPOSE 8000
 
