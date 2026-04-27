@@ -1,29 +1,30 @@
 FROM python:3.11-slim
 
 RUN apt update && apt install -y \
-curl \
 wget \
+curl \
 ffmpeg \
-unzip \
 libstdc++6 \
-espeak-ng
+ca-certificates \
+unzip
 
 WORKDIR /app
 
-# instalar python deps
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# instalar piper binário
-RUN wget https://github.com/rhasspy/piper/releases/download/v1.2.0/piper_amd64.tar.gz && \
-tar -xzf piper_amd64.tar.gz && \
-mv piper /usr/local/bin/piper && \
+# Instala Piper correto
+RUN wget https://github.com/rhasspy/piper/releases/download/v1.2.0/piper_linux_x86_64.tar.gz && \
+tar -xzf piper_linux_x86_64.tar.gz && \
+mv piper/piper /usr/local/bin/piper && \
 chmod +x /usr/local/bin/piper && \
-rm piper_amd64.tar.gz
+rm -rf piper*
 
 COPY . .
 
 RUN chmod +x start.sh
+RUN mkdir -p /app/output
+RUN mkdir -p /app/voices
 
 EXPOSE 8000
 
