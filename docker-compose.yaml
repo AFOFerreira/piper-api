@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  piper-api:
+    container_name: piper-api
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./voices:/app/voices
+      - ./output:/app/output
+    environment:
+      - TZ=America/Sao_Paulo
